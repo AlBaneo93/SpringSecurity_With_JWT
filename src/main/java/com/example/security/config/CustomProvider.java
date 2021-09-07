@@ -36,7 +36,6 @@ public class CustomProvider implements AuthenticationProvider {
     }
     // 로그인 일자 기록
     LocalDateTime now = LocalDateTime.now();
-    details.setLastLogIn(now);
     userService.login(details);
     log.info("User {} logged In at {}", details.getUsername(), now);
     // Details에 유저 정보를 담은 UserDetails 객체를 넣어야, @AuthenticationPrincipal 어노테이션으로 가져올 수 있다.

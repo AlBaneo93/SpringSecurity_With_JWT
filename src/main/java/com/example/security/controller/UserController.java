@@ -1,29 +1,40 @@
 package com.example.security.controller;
 
+import com.example.security.config.jwt.JwtCustomToken;
+import com.example.security.domain.LoginRequest;
+import com.example.security.domain.LoginResult;
 import com.example.security.domain.User;
+import com.example.security.domain.UserDto;
 import com.example.security.service.UserService;
+import com.example.security.utils.ApiUtils;
+import com.example.security.utils.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.example.security.utils.ApiUtils.success;
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
-  @Autowired
-  UserService userService;
+  private final AuthenticationManager authenticationManager;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final UserService userService;
+
+  private final PasswordEncoder passwordEncoder;
+
+  private final JwtUtils jwtUtils;
 
   @PostMapping("/join")
   public ResponseEntity<?> join(User user) {
@@ -50,5 +61,23 @@ public class UserController {
     return "error 페이지";
   }
 
+
+  @PostMapping("/autenticate")
+  public ApiUtils.ApiResults<UserDetails> authentication(@RequestBody User user) {
+    return success(userService.loadUserByUsername(user.getEmail()));
+  }
+
+  @PostMapping("/login")
+  public ApiUtils.ApiResults<?> userLogin(@RequestBody LoginRequest request) throws Exception {
+    try {
+      Authentication authentication = authenticationManager.authenticate(new JwtCustomToken(request.getPrincipal(), request.getCredentials()));
+      User user = (User) authentication.getPrincipal();
+      // jwt 발급
+      String token = jwtUtils.createToken(user);
+      return success(new LoginResult(token, UserDto.of(user)));
+    } catch (AuthenticationException e) {
+      throw new Exception();
+    }
+  }
 
 }

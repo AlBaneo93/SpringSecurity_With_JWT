@@ -11,4 +11,6 @@ public interface UserService extends UserDetailsService {
 
   void login(User user);
 
+  User login(String email, String password);
+
 }

@@ -2,9 +2,11 @@ package com.example.security.domain;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -73,6 +75,17 @@ public class User implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public void login(PasswordEncoder passwordEncoder, String rawPassword) {
+    if (!passwordEncoder.matches(rawPassword, this.password)) {
+      throw new BadCredentialsException("Password Not Mathces in DB");
+    }
+  }
+
+  public void afterLoginSuccess() {
+    this.lastLogIn = LocalDateTime.now();
+    // 로그인 카운트 증가등 로그인 이후 처리해야할 로직
   }
 
 }
