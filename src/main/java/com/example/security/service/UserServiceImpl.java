@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     // 패스워드 검증
     user.login(passwordEncoder, password);
     user.afterLoginSuccess();
-    userRepository.update(user);
+    userRepository.save(user);
     return user;
   }
 

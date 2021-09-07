@@ -37,7 +37,7 @@ public class UserController {
   private final JwtUtils jwtUtils;
 
   @PostMapping("/join")
-  public ResponseEntity<?> join(User user) {
+  public ResponseEntity<?> join(@RequestBody User user) {
     log.info("Join User data :: {}", user.toString());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return ResponseEntity.ok(userService.save(user));
@@ -69,8 +69,10 @@ public class UserController {
 
   @PostMapping("/login")
   public ApiUtils.ApiResults<?> userLogin(@RequestBody LoginRequest request) throws Exception {
+    log.warn(request.toString());
     try {
       Authentication authentication = authenticationManager.authenticate(new JwtCustomToken(request.getPrincipal(), request.getCredentials()));
+      log.warn("UserController ::: authentication - {}", authentication.toString());
       User user = (User) authentication.getPrincipal();
       // jwt 발급
       String token = jwtUtils.createToken(user);
