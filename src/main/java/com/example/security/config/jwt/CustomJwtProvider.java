@@ -1,6 +1,5 @@
 package com.example.security.config.jwt;
 
-import com.example.security.domain.JwtAuthentication;
 import com.example.security.domain.User;
 import com.example.security.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class CustomJwtProvider implements AuthenticationProvider {
   private Authentication processUserAuthentication(String email, String password) throws Exception {
     try {
       User user = userService.login(email, password);
-      JwtCustomToken jwtCustomToken = new JwtCustomToken(new JwtAuthentication(user.getId(), user.getName()), null, user.getAuthorities());
+      JwtCustomToken jwtCustomToken = new JwtCustomToken(user, null, user.getAuthorities());
       jwtCustomToken.setDetails(user);
       return jwtCustomToken;
     } catch (Exception e) {

@@ -1,17 +1,19 @@
 package com.example.security.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class LoginResult {
 
-  private final String token;
+  private String token;
 
-  private final UserDto user;
+  private UserDto user;
 
   @Override
   public String toString() {
