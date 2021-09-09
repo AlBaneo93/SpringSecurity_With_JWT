@@ -43,7 +43,7 @@ public class UserController {
     return ResponseEntity.ok(userService.save(user));
   }
 
-  @GetMapping("/")
+  @GetMapping
   public String index() {
     return "index 페이지";
   }
@@ -68,11 +68,9 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ApiUtils.ApiResults<?> userLogin(@RequestBody LoginRequest request) throws Exception {
-    log.warn(request.toString());
+  public ApiUtils.ApiResults<LoginResult> userLogin(@RequestBody LoginRequest request) throws Exception {
     try {
-      Authentication authentication = authenticationManager.authenticate(new JwtCustomToken(request.getPrincipal(), request.getCredentials()));
-      log.warn("UserController ::: authentication - {}", authentication.toString());
+      Authentication authentication = authenticationManager.authenticate(new JwtCustomToken(request.getPrincipal(), String.valueOf(request.getCredentials())));
       User user = (User) authentication.getPrincipal();
       // jwt 발급
       String token = jwtUtils.createToken(user);

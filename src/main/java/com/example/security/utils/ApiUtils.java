@@ -1,5 +1,8 @@
 package com.example.security.utils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ApiUtils<T> {
 
   public static <T> ApiResults<T> success(T response) {
@@ -10,6 +13,8 @@ public class ApiUtils<T> {
     return new ApiResults(false, null, new ApiError(code, msg));
   }
 
+  @Getter
+  @Setter
   public static class ApiResults<T> {
 
     boolean success;
@@ -26,6 +31,8 @@ public class ApiUtils<T> {
 
   }
 
+  @Getter
+  @Setter
   static class ApiError {
 
     int code;

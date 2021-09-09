@@ -62,8 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().formLogin().disable().httpBasic().disable().cors().disable()
-        .authorizeRequests().antMatchers("/api/login", "/api/join")
-        .permitAll()
+        .authorizeRequests()
+        .antMatchers("/api/login", "/api/join").permitAll()
         .anyRequest().authenticated()
         .and()
         .exceptionHandling()
@@ -118,7 +118,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public JwtAuthFilter jwtAuthFilter() {
-    return new JwtAuthFilter(jwtUtils);
+    return new JwtAuthFilter(jwtUtils, userService);
   }
 
   @Override
@@ -126,10 +126,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     auth.authenticationProvider(customJwtProvider());
   }
 
-//  @Bean
-//  @Override
-//  public AuthenticationManager authenticationManager() throws Exception {
-//    return super.authenticationManagerBean();
-//  }
+  //  @Bean
+  //  @Override
+  //  public AuthenticationManager authenticationManager() throws Exception {
+  //    return super.authenticationManagerBean();
+  //  }
 
 }
